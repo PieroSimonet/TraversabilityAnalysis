@@ -30,23 +30,25 @@ general:
   # predicted_path: "/home/fusy/repos/code2_paper/code2/DL_data/out_pandaset2/"   #cyl3d
   # predicted_path: "/home/fusy/repos/trav_analysis_2_coarse2fine/nures/"
 
-  load_path: "../models/results00/"
-  save_path: "../models/results00/"
+  load_path: "/var/home/piero/Projects/ros/wheelchair_ws/src/trav_analysis_2/models/results00/"
+  save_path: "/var/home/piero/Projects/ros/wheelchair_ws/src/trav_analysis_2/models/results00/"
   store_features_filename: "features_data_4p"
 
   seed: 21415
   iters:  [5000, 5500, 6000, 6500, 6750, 7000, 7250, 7500, 7750, 8000]
 
+  # tutto in m
+
   cyl00:
-    min_radius: 3.0
-    max_radius: 40.0
-    steps_num: 8
-    yaw_steps: 16
+    min_radius: 0.5 
+    max_radius: 2.5
+    steps_num: 16
+    yaw_steps: 33
     z_level: -5 # for visualization
-    mode: 3
-    pca: 17
-    trick: 0
-    nu: 0.1921
+    mode: 3 # lascia stare, guarda il paper
+    pca: 17  # handcraft
+    trick: 0 # ingnora or 1
+    nu: 0.1921 
     gamma: 0.0843
     iters: 5000
     train:
@@ -60,11 +62,11 @@ general:
       balance_flag: false
 
   cyl01:
-    min_radius: 3.0
-    max_radius: 40.0
+    min_radius: 0.5
+    max_radius: 2.5
     steps_num: 16
-    yaw_steps: 32
-    z_level: 2
+    yaw_steps: 33
+    z_level: 0.2
     mode: 4
     pca: 17
     trick: 0
@@ -81,27 +83,27 @@ general:
       feats_to_sample: -1
       balance_flag: false
 
-  cyl02:
-    min_radius: 3.0
-    max_radius: 40.0
-    steps_num: 64
-    yaw_steps: 128
-    z_level: -1.5
-    mode: 4
-    pca: 17
-    trick: 0
-    nu: 0.2009
-    gamma: 0.0893
-    iters: 7500
-    train:
-      feats_to_sample: 48000
-      balance_flag: false
-      nu_vec: [0.23]
-      gamma_vec: [0.07]
-      C_vec: [1.0]
-    valid:
-      feats_to_sample: -1
-      balance_flag: false 
+#  cyl02:
+#    min_radius: 0.5
+#    max_radius: 2.5
+#    steps_num: 16
+#    yaw_steps: 128
+#    z_level: -1.5
+#    mode: 4
+#    pca: 17
+#    trick: 0
+#    nu: 0.2009
+#    gamma: 0.0893
+#    iters: 7500
+#    train:
+#      feats_to_sample: 48000
+#      balance_flag: false
+#      nu_vec: [0.23]
+#      gamma_vec: [0.07]
+#      C_vec: [1.0]
+#    valid:
+#      feats_to_sample: -1
+#      balance_flag: false 
 
 mtthread:
   sequences: [0, 1, 2, 3, 4, 5, 6, 7, 9, 10]

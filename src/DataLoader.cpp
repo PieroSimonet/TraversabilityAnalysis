@@ -7,6 +7,8 @@ DataLoader::DataLoader(std::string dataset_path_) {
   dataset_path = dataset_path_;
 }
 
+DataLoader_ROS::DataLoader_ROS(std::string dummy_dataset_path) : DataLoader(dummy_dataset_path) {}
+
 DataLoader_SemKITTI::DataLoader_SemKITTI(std::string SemKITTI_dataset_path) : DataLoader(SemKITTI_dataset_path) {}
 
 DataLoader_PandaSet::DataLoader_PandaSet(std::string PandaSet_dataset_path) : DataLoader(PandaSet_dataset_path) {}
@@ -33,6 +35,46 @@ DataLoader_NuSc::DataLoader_NuSc(std::string recipe_path) : DataLoader(recipe_pa
 
 void DataLoader::readData(int seq, int idx, YAML::Node &sample_data) {}
 void DataLoader::readPredicted(int seq, int idx, YAML::Node &sample_data) {}
+
+
+void DataLoader_ROS::setData(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& msg) {
+
+  // std::cout << "I could set a point cloud with " << msg->points.size() << std::endl;
+
+  points.clear();
+  labels.clear();
+
+  points.resize(msg->points.size());
+
+  for (size_t i = 0; i < msg->points.size(); ++i) {
+    auto ptr1 = &(points[i]);
+    auto ptr2 = &(msg->points[i]);
+    (*ptr1)(0) = ptr2->x;
+    (*ptr1)(1) = ptr2->y;
+    (*ptr1)(2) = ptr2->z;
+  }
+  /*
+  c = 0;
+  std::ifstream fin(dataset_path+"sequences/"+new_seq_s+"/velodyne/"+new_idx_s+".bin", std::ios::binary);
+  
+  while (fin.read(reinterpret_cast<char*>(&f), sizeof(float))) {
+    
+         if (c==0) p(0) = f;
+    else if (c==1) p(1) = f;
+    else if (c==2) p(2) = f;
+    else points.push_back(p);
+
+    c = (c + 1) %4;
+  }
+
+  std::ifstream lin(dataset_path+"sequences/"+new_seq_s+"/labels/"+new_idx_s+".label", std::ios::binary);
+  while (lin.read(reinterpret_cast<char*>(&c), sizeof(int)))
+    labels.push_back(c & 0xFFFF);*/
+
+  computeSceneNormal();
+
+}
+
 
 
 DataLoader_PLY::DataLoader_PLY(std::string ply_path_) : DataLoader(ply_path_) {
@@ -488,3 +530,14 @@ void DataLoader::computeSceneNormal() {
   if (eigensolver.info() != Eigen::Success) scene_normal = Eigen::MatrixXd::Zero(3, 3);
   else scene_normal = eigensolver.eigenvectors().col(0); // because eigenvalues are sorted in increasing order
 }
+
+
+
+
+void DataLoader_ROS::readData(int seq, int idx, YAML::Node &sample_data) {}
+void DataLoader_ROS::readPredicted(int seq, int idx, YAML::Node &sample_data) {}
+int DataLoader_ROS::count_samples(int seq) {return 0;}
+
+std::shared_ptr<const open3d::geometry::PointCloud> DataLoader_ROS::getPaintedCloud() {return nullptr;}
+std::shared_ptr<const open3d::geometry::VoxelGrid> DataLoader_ROS::getPaintedCloudVoxeled(float voxel_size) {return nullptr;}
+

@@ -1,0 +1,9 @@
+<library path="lib/libtrav">
+  <class name="trav_analysis_2/Trav"
+         type="traversability::Trav"
+         base_class_type="nodelet::Nodelet">
+    <description>
+      Node to nodelet test
+    </description>
+  </class>
+</library>

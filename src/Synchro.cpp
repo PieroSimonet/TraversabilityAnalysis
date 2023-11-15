@@ -68,14 +68,14 @@ void Synchro::update() {
   while(spin_flag) {
     // mu.lock(); // maybe unnecessary
 
-    // if (!pointclouds_ptr.empty()) {
-    //   vis.ClearGeometries();
-    //   auto rr = pointclouds_ptr.front();
-    //   // std::cout << "publishing cloud with " << rr->points_.size() << "\n";
-    //   vis.AddGeometry(pointclouds_ptr.front(), false);
-    //   pointclouds_ptr.pop();
-    //   update_geometry=true;
-    // }
+     if (!pointclouds_ptr.empty()) {
+       vis.ClearGeometries();
+       auto rr = pointclouds_ptr.front();
+       // std::cout << "publishing cloud with " << rr->points_.size() << "\n";
+       vis.AddGeometry(pointclouds_ptr.front(), false);
+       pointclouds_ptr.pop();
+       update_geometry=true;
+     }
 
     // if (!pointclouds_v_ptr.empty()) {
     //   vis.ClearGeometries();
@@ -254,6 +254,8 @@ void Synchro::updateTriangPred(int level, std::vector<Cell> &grid) {
   auto info = infos[level];
   auto mesh = meshes[level];
 
+  //int ca1=0, ca2=0;
+
   for (int row_idx = 0; row_idx<info.steps_num; row_idx++) {
     for (int yaw_idx = 0; yaw_idx<info.yaw_steps; yaw_idx++, i++) {
 
@@ -261,10 +263,15 @@ void Synchro::updateTriangPred(int level, std::vector<Cell> &grid) {
       label = grid[idx].predicted_label;
       gtlabel = grid[idx].label;
 
-      if (gtlabel==UNKNOWN_CELL_LABEL || grid[idx].status==UNPREDICTABLE) color_ = darkgray;
+//      if (gtlabel==UNKNOWN_CELL_LABEL || grid[idx].status==UNPREDICTABLE) {
+//        color_ = darkgray;
+//        if (gtlabel==UNKNOWN_CELL_LABEL) ca1++;
+//        if (grid[idx].status==UNPREDICTABLE) ca2++;
+//      }
+      if (grid[idx].status==UNPREDICTABLE) color_ = darkgray;
       else {
         if (label>0) {
-          color_ = white; //limegreen;
+          color_ = limegreen; //limegreen;
         }
         else {
           color_ = red; //lightred;
@@ -278,6 +285,9 @@ void Synchro::updateTriangPred(int level, std::vector<Cell> &grid) {
       mesh->vertex_colors_[cont ++] = (color_);
     }
   }
+
+  // std::cout << "unknown: " << ca1 << std::endl;
+  // std::cout << "unpredi: " << ca2 << std::endl;
 
   //mesh->ComputeVertexNormals();
 

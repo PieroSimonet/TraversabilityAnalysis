@@ -19,6 +19,10 @@
 #include "open3d/Open3D.h"
 #endif
 
+#include <pcl_ros/point_cloud.h>
+
+
+
 class DataLoader {
 protected:
   float f;
@@ -118,6 +122,23 @@ public:
 #if OPEN3D == 1
   std::shared_ptr<const open3d::geometry::PointCloud> getPaintedCloud();
   // std::shared_ptr<const open3d::geometry::VoxelGrid> getPaintedCloudVoxeled(float voxel_size);
+#endif
+
+};
+
+
+class DataLoader_ROS : public DataLoader {
+public:
+  DataLoader_ROS(std::string dataset_path);
+  void readData(int seq, int idx, YAML::Node &sample_data);
+  void readPredicted(int seq, int idx, YAML::Node &sample_data);
+  int count_samples(int seq);
+
+  void setData(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& laserCloudMsg);
+
+#if OPEN3D == 1
+  std::shared_ptr<const open3d::geometry::PointCloud> getPaintedCloud();
+  std::shared_ptr<const open3d::geometry::VoxelGrid> getPaintedCloudVoxeled(float voxel_size);
 #endif
 
 };

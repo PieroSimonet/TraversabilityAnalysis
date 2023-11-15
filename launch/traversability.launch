@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="manager"             default="realsense2_camera_manager"/>
+
+  <include ns="camera" file="$(find trav_analysis_2)/launch/custom_rs_rgbd.launch"> 
+    <arg name="enable_pointcloud"   default="true"/>
+    <arg name="clip_distance"       default="3"/>
+    <arg name="manager"             value="$(arg manager)"/>
+  </include> 
+
+  <!-- <node pkg="trav_analysis_2" type="ros_receiver" name="traversability" output="screen">
+    <remap from="/visual/pointcloud" to="/camera/camera/depth/color/points" />
+    <param name="load_path" value="$(find trav_analysis_2)/models/results00" />
+  </node> -->
+
+  <group ns="camera">
+    <group ns="camera">
+      <!-- I am not sure that the connection is working correctly, but it should be -->
+      <node pkg="nodelet" type="nodelet" name="traversability" args="load trav_analysis_2/Trav $(arg manager) false">
+        <remap from="/visual/pointcloud" to="depth/color/points" />
+        <param name="load_path" value="$(find trav_analysis_2)/models/results00" />
+      </node>
+
+    </group>
+  </group>
+
+</launch>

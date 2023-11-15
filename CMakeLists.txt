@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "-std=c++14")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -g -pthread")
 
 #set(COMPILE_MODE "compile_basic")
+SET(SYNCHRO 1) # 0 -> DO NOT CREATE THE DISPLAY GUI, 1 -> CREATE THE DISPLAY GUI
 
 option(OPEN3D "Compile with Open3D flag" 1)
 if (OPEN3D)
@@ -15,6 +16,16 @@ add_definitions(-DOPEN3D=1)
 else()
 add_definitions(-DOPEN3D=0)
 endif()
+
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  roslib
+  rospy
+  std_msgs
+  pcl_ros
+  proximity_grid
+  nodelet
+)
 
 find_package(OpenCV REQUIRED )
 
@@ -31,12 +42,25 @@ else()
 	message("OPEN3D IS ZERO")
 endif()
 
+if(SYNCHRO)
+  message("SYNCHRO GUI IS ON")
+else()
+  message("SYNCHRO GUI IS OFF")
+endif()
+
 
 
 find_package(yaml-cpp REQUIRED)
 
 #add_subdirectory(yaml-cpp)
 
+
+
+catkin_package(
+   INCLUDE_DIRS include
+   CATKIN_DEPENDS roscpp std_msgs 
+)
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 # include directories
 include_directories(
@@ -102,19 +126,26 @@ SET (custom_libs cylinder feature normalizer color_util yaml-cpp metric results 
 
 
 # # Produce Feature
-add_executable(mtmain src/mtmain.cpp)
-target_link_libraries(mtmain ${custom_libs} ${OpenCV_LIBS} )
+# add_executable(mtmain src/mtmain.cpp)
+# target_link_libraries(mtmain ${custom_libs} ${OpenCV_LIBS} )
 
 # Train
 add_executable(train src/train.cpp)
 target_link_libraries(train ${custom_libs} traindataset ${OpenCV_LIBS} )
 
 # # Test
-add_executable(test src/try_cyl.cpp)
-target_link_libraries(test  ${custom_libs})
+#add_executable(test src/try_cyl.cpp)
+#target_link_libraries(test  ${custom_libs})
 
 add_executable(test_dl src/test_labels.cpp)
 target_link_libraries(test_dl ${custom_libs} )
 
-add_executable(processSingleCloud src/processSingleCloud.cpp)
-target_link_libraries(processSingleCloud ${custom_libs} )
+#add_executable(processSingleCloud src/processSingleCloud.cpp)
+#target_link_libraries(processSingleCloud ${custom_libs} )
+
+# Nodelet library
+add_library(trav src/rosnodelet.cpp)
+target_link_libraries(trav ${custom_libs} ${catkin_LIBRARIES})
+
+add_executable(ros_receiver src/rosdemo.cpp)
+target_link_libraries(ros_receiver ${custom_libs} ${catkin_LIBRARIES})

@@ -712,6 +712,7 @@ void Cylinder::process_Propagate(int valid_rows) {
   for (int r=0; r < valid_rows; r++) {
     plab = predictions_vector.at<float>(r, 0) > 0 ? TRAV_CELL_LABEL : NOT_TRAV_CELL_LABEL;
     grid[remap_idxs[r]].predicted_label = plab; // if trick is wanted to be float, put pred
+    grid[remap_idxs[r]].predicted_probability = predictions_vector.at<float>(r, 0);
   }
 }
 
