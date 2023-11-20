@@ -88,6 +88,7 @@ Processing enabled by this node:
   <arg name="tf_publish_rate"     default="0"/> <!-- 0 - static transform -->
 
   <arg name="clip_distance"       default="-1"/>
+  <arg name="ordered_pc"          default="false"/>
 
   <!-- rgbd_launch specific arguments -->
 
@@ -164,6 +165,7 @@ Processing enabled by this node:
       <arg name="tf_publish_rate"          value="$(arg tf_publish_rate)"/>
 
       <arg name="clip_distance"            value="$(arg clip_distance)"/>
+      <arg name="ordered_pc"               value="$(arg ordered_pc)"/>
     </include>
 
     <!-- RGB processing -->

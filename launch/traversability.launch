@@ -7,6 +7,7 @@
     <arg name="enable_pointcloud"   default="true"/>
     <arg name="clip_distance"       default="3"/>
     <arg name="manager"             value="$(arg manager)"/>
+    <arg name="ordered_pc" value="true" />
   </include> 
 
   <!-- <node pkg="trav_analysis_2" type="ros_receiver" name="traversability" output="screen">
