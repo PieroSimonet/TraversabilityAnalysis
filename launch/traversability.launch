@@ -5,24 +5,95 @@
 
   <include ns="camera" file="$(find trav_analysis_2)/launch/custom_rs_rgbd.launch"> 
     <arg name="enable_pointcloud"   default="true"/>
-    <arg name="clip_distance"       default="3"/>
+    <arg name="clip_distance"       default="2"/>
     <arg name="manager"             value="$(arg manager)"/>
+    <arg name="odered_pc"	     value="true" />
   </include> 
+  
+  <!-- <param name="use_sim_time" type="bool" value="False" /> 
+  
+    <node name="all_in_one" pkg="simpcl" type="all_in_one" output="screen">
+        <param name="subscribed_topic" type="string" value="/camera/camera/depth/color/points"/>
+        <param name="published_topic" type="string" value="/cloud_filtered"/>
+        <param name="loop_rate" type="int" value="16"/>
+        <param name="buffer_size" type="int" value="1"/>
 
-  <!-- <node pkg="trav_analysis_2" type="ros_receiver" name="traversability" output="screen">
+        <param name="leaf_size_x" type="double" value="0.01"/>
+        <param name="leaf_size_y" type="double" value="0.01"/> 
+        <param name="leaf_size_z" type="double" value="0.01"/> 
+
+        <param name="min_value_x" type="double" value="-15"/> 
+        <param name="max_value_x" type="double" value="15.0"/> 
+        <param name="min_value_y" type="double" value="-20.0"/>
+        <param name="max_value_y" type="double" value="20.0"/> 
+        <param name="min_value_z" type="double" value="-20.0"/> 
+        <param name="max_value_z" type="double" value="20.0"/> 
+
+        <param name="meanK" type="int" value="50"/>
+        <param name="mulThresh" type="double" value="0.001"/> 
+        
+        <param name="max_distance" type="double" value="0.2"/>
+        <param name="max_iteration" type="int" value="16"/>
+    </node>
+    
+   <node pkg="road_pcl" type="road_pcl" name="road_pcl">
+    <param name="topicName" value="/cloud_filtered" />
+    <param name="maxIter" value="1000" />
+    <param name="leafSize" value="0.05" />
+    <param name="distanceThresh" value="0.3" />
+    <remap from="/roadpcl" to="/roadpcl" />
+  </node> -->
+  
+  <node pkg="road_pcl" type="road_pcl" name="road_pcl">
+    <param name="topicName" value="/camera/camera/depth/color/points" />
+    <param name="maxIter" value="1000" />
+    <param name="leafSize" value="0.05" />
+    <param name="distanceThresh" value="0.05" />
+    <remap from="/roadpcl" to="/roadpcl" />
+  </node> 
+  
+  
+  <!--
+  
+  <node pkg="road_pcl" type="road_pcl" name="road_pcl">
+    <param name="topicName" value="/roadpcl_f" />
+    <param name="maxIter" value="1000" />
+    <param name="leafSize" value="0.05" />
+    <param name="distanceThresh" value="0.3" />
+    <remap from="/roadpcl" to="/roadpcl_1" />
+  </node> 
+  
+  <node pkg="sensor_filters" type="pointcloud2_filter_chain" output="screen" name="ff" >
+        <remap from="~input" to="/camera/camera/depth_registered/points" />
+        <remap from="~output" to="/roadpcl_f" />
+        <rosparam command="load" file="$(find trav_analysis_2)/config/camera.yaml" />
+  </node>
+  
+   <node pkg="road_pcl" type="road_pcl" name="road_pcl1">
+    <param name="topicName" value="/roadpcl_1" />
+    <param name="maxIter" value="1000" />
+    <param name="leafSize" value="0.05" />
+    <param name="distanceThresh" value="1" />
+    <remap from="/roadpcl" to="/roadpcl_a" />
+  </node> 
+
+  -->
+
+  <node pkg="trav_analysis_2" type="ros_receiver" name="traversability" output="screen">
+    <!-- <remap from="/visual/pointcloud" to="/camera/camera/depth/color/points" /> -->
     <remap from="/visual/pointcloud" to="/camera/camera/depth/color/points" />
     <param name="load_path" value="$(find trav_analysis_2)/models/results00" />
-  </node> -->
+  </node> 
 
-  <group ns="camera">
+  <!-- <group ns="camera">
     <group ns="camera">
-      <!-- I am not sure that the connection is working correctly, but it should be -->
+      I am not sure that the connection is working correctly, but it should be 
       <node pkg="nodelet" type="nodelet" name="traversability" args="load trav_analysis_2/Trav $(arg manager) false">
         <remap from="/visual/pointcloud" to="depth/color/points" />
         <param name="load_path" value="$(find trav_analysis_2)/models/results00" />
       </node>
 
     </group>
-  </group>
+  </group>-->
 
 </launch>
