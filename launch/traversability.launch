@@ -7,7 +7,7 @@
     <arg name="enable_pointcloud"   default="true"/>
     <arg name="clip_distance"       default="2"/>
     <arg name="manager"             value="$(arg manager)"/>
-    <arg name="odered_pc"	     value="true" />
+    <arg name="ordered_pc" value="true" />
   </include> 
   
   <!-- <param name="use_sim_time" type="bool" value="False" /> 

@@ -1,0 +1,49 @@
+output_queue_size: 1
+
+cloud_filter_chain:
+  - name: PassThroughFilter
+    type: point_cloud2_filters/PassThroughFilterPointCloud2
+    params:
+      active: True
+      input_frame: "camera_link"
+      output_frame: "camera_link"
+      keep_organized: True
+      negative: False
+      #user_filter_value: 3
+      filter_field_name: "z"
+      filter_limit_min: -5
+      filter_limit_max: 0.2
+      
+  - name: StatisticalOutlierRemoval
+    type: point_cloud2_filters/StatisticalOutlierRemovalPointCloud2
+    params:
+      active: False
+      input_frame: "camera_link"
+      output_frame: "camera_link"
+      leaf_size_x: 0.1
+      leaf_size_y: 0.2
+      leaf_size_z: 0.1
+      min_points_per_voxel: 1
+      downsample_all_data: True
+      filter_field_name: "y"
+      filter_limit_min: -1
+      filter_limit_max: 1
+      negative: False
+      
+  - name: VoxelGridFilter
+    type: point_cloud2_filters/VoxelGridFilterPointCloud2
+    params:
+      active: False
+      input_frame: "camera_link"
+      output_frame: "camera_link"
+      leaf_size_x: 0.1
+      leaf_size_y: 0.2
+      leaf_size_z: 0.1
+      min_points_per_voxel: 1
+      downsample_all_data: True
+      filter_field_name: "y"
+      filter_limit_min: -1
+      filter_limit_max: 1
+      negative: False
+      
+
