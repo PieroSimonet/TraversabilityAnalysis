@@ -8,7 +8,7 @@
 
 #include "yaml-cpp/yaml.h"
 
-#if SYNCHRO == 1
+#if SYNCHRO_A == 1
   #include "Synchro.h"
 #endif
 
@@ -42,7 +42,7 @@ namespace traversability {
           this->new_data = false;
           this->sample_data = YAML::LoadFile(ros::package::getPath("trav_analysis_2") + std::string("/models/test.yaml"));
 
-          #if SYNCHRO == 1
+          #if SYNCHRO_A == 1
             this->synchro = new Synchro(this->sample_data, true);
           #endif 
         }
@@ -90,7 +90,7 @@ namespace traversability {
           // Load the svm model
           loadCyls(this->cyls, this->sample_data);
 
-          #if SYNCHRO == 1
+          #if SYNCHRO_A == 1
             this->synchro->resetViewFlag(); 
           #endif
 
@@ -167,7 +167,7 @@ namespace traversability {
                 cyl->OnlineRoutine(*dl_ros, cyl->level ? cyls[cyl->level-1] : nullptr);
               }
               
-              #if SYNCHRO == 1
+              #if SYNCHRO_A == 1
                 synchro->addPointCloud(*dl_ros);
                 synchro->addPolarGridPred(1, cyls[1]->grid); // <-- this is the message
               #endif
@@ -233,7 +233,7 @@ namespace traversability {
         uint64_t runtime, tot_runtime=0;
         double avg_runtime;
 
-        #if SYNCHRO == 1
+        #if SYNCHRO_A == 1
           Synchro* synchro;
         #endif
 

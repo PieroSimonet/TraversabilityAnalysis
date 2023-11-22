@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "-std=c++14")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -g -pthread")
 
 #set(COMPILE_MODE "compile_basic")
-SET(SYNCHRO 1) # 0 -> DO NOT CREATE THE DISPLAY GUI, 1 -> CREATE THE DISPLAY GUI
+SET(SYNCHRO_A 1) # 0 -> DO NOT CREATE THE DISPLAY GUI, 1 -> CREATE THE DISPLAY GUI
 
 option(OPEN3D "Compile with Open3D flag" 1)
 if (OPEN3D)
@@ -42,10 +42,12 @@ else()
 	message("OPEN3D IS ZERO")
 endif()
 
-if(SYNCHRO)
-  message("SYNCHRO GUI IS ON")
+if(SYNCHRO_A)
+  message("SYNCHRO_A GUI IS ON")
+  add_compile_definitions(SYNCHRO_A=1)
 else()
-  message("SYNCHRO GUI IS OFF")
+  message("SYNCHRO_A GUI IS OFF")
+  add_compile_definitions(SYNCHRO_A=0)
 endif()
 
 
