@@ -2,41 +2,50 @@
 <launch>
 
   <arg name="manager"             default="realsense2_camera_manager"/>
-  <arg name="target_frame" default="base_link" /> <!-- TODO: check the one of the whelchair -->
-  <arg name="cloud_in1" default="/camera_left/depth/points" />
-  <arg name="cloud_in2" default="/camera_rigth/depth/points" />
-  <arg name="cloud_out" default="/camera/cloud_concatenated" />
+  <arg name="target_frame"        default="base_link" /> <!-- TODO: check the one of the whelchair -->
+  <arg name="cloud_in1"           default="/camera_left/depth/points" />
+  <arg name="cloud_in2"           default="/camera_rigth/depth/points" />
+  <arg name="cloud_out"           default="/camera/cloud_concatenated" />
+  <arg name="tf_prefix_left"      default="camera_left"/>
+  <arg name="tf_prefix_right"     default="camera_right"/>
+  <arg name="clip_distance"       default="3"/>
+  <arg name="external_manager"    default="false"/>
+  <arg name="enable_pointcloud"   default="true"/>
+  <arg name="hz"                  default="30"/>
 
   <!-- Nodelet manager -->
   <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" output="screen"/>
 
-  <!-- Cemera 1 -->
+  <!-- Cemera left -->
   <include ns="camera" file="$(find trav_analysis_2)/launch/custom_rs_rgbd.launch"> 
-    <arg name="enable_pointcloud"   default="true"/>
-    <arg name="clip_distance"       default="3"/>
+    <arg name="enable_pointcloud"   value="$(arg enable_pointcloud)"/>
+    <arg name="clip_distance"       value="$(arg clip_distance)"/>
     <arg name="manager"             value="$(arg manager)"/>
-    <arg name="external_manager"    value="false"/>
-    <arg name="ordered_pc" value="true" />
-    <arg name="serial_no" value="053422251600"/>
+    <arg name="external_manager"    value="$(arg external_manager)"/>
+    <arg name="ordered_pc"          value="true" />
+    <arg name="serial_no"           value="053422251600"/>
+    <arg name="tf_prefix"           value="$(arg tf_prefix_left)"/>
     <remap from="/camera/camera/depth/color/points" to="$(arg cloud_in1)"/>
   </include> 
 
-  <!-- Cemera 2 -->
+  <!-- Cemera rigth -->
   <include ns="camera" file="$(find trav_analysis_2)/launch/custom_rs_rgbd.launch"> 
-    <arg name="enable_pointcloud"   default="true"/>
-    <arg name="clip_distance"       default="3"/>
+    <arg name="enable_pointcloud"   value="$(arg enable_pointcloud)"/>
+    <arg name="clip_distance"       value="$(arg clip_distance)"/>
     <arg name="manager"             value="$(arg manager)"/>
-    <arg name="external_manager"    value="false"/>
-    <arg name="ordered_pc" value="true" />
-    <arg name="serial_no" value="233722071054"/>
+    <arg name="external_manager"    value="$(arg external_manager)"/>
+    <arg name="ordered_pc"          value="true" />
+    <arg name="serial_no"           value="233722071054"/>
+    <arg name="tf_prefix"           value="$(arg tf_prefix_rigth)"/>
     <remap from="/camera/camera/depth/color/points" to="$(arg cloud_in2)"/>
   </include>
 
+  <!-- TODO: need to use the calibrated tf -->
   <!-- Fusion of the sensors -->
   <node pkg="pointcloud_concatenate" type="pointcloud_concatenate_node" name="pc_concat" output="screen">
-    <param name="target_frame" value="$(arg target_frame)" />    
-    <param name="clouds" value="2" />
-    <param name="hz" value="10" />
+    <param name="target_frame"      value="$(arg target_frame)" />    
+    <param name="clouds"            value="2" />
+    <param name="hz"                value="$(arg hz)" />
     <remap from="cloud_in1" to="$(arg cloud_in1)" />
     <remap from="cloud_in2" to="$(arg cloud_in2)" />
     <remap from="cloud_out" to="$(arg cloud_out)" />
@@ -48,10 +57,10 @@
   
       <!-- todo move this to nodelet -->
       <node pkg="ema_pc" type="ema_pc" name="ema_pc" output="screen">
-        <remap from="pc_input" to="$(arg cloud_out)" />
+        <remap from="pc_input"  to="$(arg cloud_out)" />
         <remap from="pc_output" to="/ema_pc/points" />
         <param name="ema_coeff" value="0.9" />
-        <param name="hz" value="30" />
+        <param name="hz"        value="$(arg hz)" />
       </node> 
     
       <!-- Run a VoxelGrid filter to clean NaNs and downsample the data -->
@@ -67,7 +76,7 @@
       </node> 
 
       <node name="plane_fitter" type="check_planarity" pkg="plane_fitter" output="screen">
-        <remap from="/sense3d/scan" to="/camera/camera/voxel_grid/output"/>
+        <remap from="/sense3d/scan"   to="/camera/camera/voxel_grid/output"/>
         <param name="_min_percentage" value="2" />
       </node>
 
@@ -82,7 +91,7 @@
     
       <node pkg="nodelet" type="nodelet" name="traversability" args="load trav_analysis_2/Trav $(arg manager) false">
         <remap from="/visual/pointcloud" to="/camera/camera/plane_fitter/inliers" />
-        <param name="load_path" value="$(find trav_analysis_2)/models/results00" />
+        <param name="load_path"          value="$(find trav_analysis_2)/models/results00" />
       </node>
 
     </group>
